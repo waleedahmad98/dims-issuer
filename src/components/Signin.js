@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { useConnect } from "@stacks/connect-react";
 
 export const Signin = () => {

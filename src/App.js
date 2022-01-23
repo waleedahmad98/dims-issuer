@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Profile from './components/Profile.js';
 import Signin from './components/Signin.js';
-import icon from "./assets/images/favicon.ico"
 
 import { AppConfig, UserSession } from "@stacks/connect";
 import { Connect } from '@stacks/connect-react';
