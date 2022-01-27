@@ -2,7 +2,7 @@ import React from 'react';
 import { Storage } from "@stacks/storage";
 import { useState, useEffect } from 'react';
 import {
-  Person,
+  Person, transactions,
 } from 'blockstack';
 import { issueNFT } from '../functions/contractCalls';
 import MD5 from 'crypto-js/md5';
@@ -33,6 +33,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
     try {
       storage.getFile(allTransactionsFile, { decrypt: false }).then(file => {
         setAllTransactions(JSON.parse(file));
+        console.log(JSON.parse(file))
 
       })
     }
@@ -57,7 +58,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         .then(async (r) => {
           //console.log(owner, MD5(file).toString(), degree, r)
           let resp = await issueNFT(owner, MD5(file).toString(), degree, r)
-          console.log(resp)
+          console.log("test", resp)
           if (resp.status === 200) {
             setCustomAlert(setIssuingAlert, 'success', 'The document has successfully been stored and secured on the Blockchain as a Non-Fungible Token.')
             let obj = allTransactions
@@ -77,6 +78,9 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
     <div className="container text-start">
       <div className='d-flex flex-row justify-content-between mt-5'>
         <h3 className='osb'>Welcome, {person._profile.stxAddress.testnet}</h3>
+        <button type="button" className='btn btn-primary ms-2' onClick={()=>{
+          storage.deleteFile(allTransactionsFile);
+        }}>TEST FUNCTION: Clear Gaia Hub</button>
         <button type="button" className='btn btn-primary ms-2' onClick={handleSignOut}> Sign Out</button>
       </div>
 
@@ -122,7 +126,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
 
         </div>
       </div>
-
+        
       <TransactionsBox data = {allTransactions} />
     </div>
   );

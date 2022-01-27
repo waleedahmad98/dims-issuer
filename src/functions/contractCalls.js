@@ -25,11 +25,11 @@ const issueNFT = async (owner, hash, degree, link) => {
             icon: window.location.origin + "/my-app-logo.svg",
         },
         onFinish: (data) => {
-            resp = {"txlink":`https://explorer.stacks.co/txid/${data.txId}?chain=testnet`, "txid":data.txId, "status":200};
+            console.log("test2", data.txId)
+            resp = {"txlink":`https://explorer.stacks.co/txid/${data.txId.txid}?chain=testnet`, "txid":data.txId.txid, "status":200};
         },
     };
     await openContractCall(options)
-    console.log(resp)
     return resp;
 };
 
