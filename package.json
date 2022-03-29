@@ -21,6 +21,7 @@
     "@stacks/connect": "^6.4.0",
     "@stacks/connect-react": "^13.0.0",
     "@stacks/storage": "^3.1.0",
+    "axios": "^0.26.1",
     "blockstack": "^19.2.5",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",

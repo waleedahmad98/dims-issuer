@@ -7,6 +7,8 @@ import {
 import { issueNFT } from '../functions/contractCalls';
 import MD5 from 'crypto-js/md5';
 import TransactionsBox from './TransactionsBox';
+import { BASE_API_URL, CHAIN_TYPE } from '../config';
+import axios from 'axios';
 
 export const Profile = ({ userData, userSession, handleSignOut }) => {
   const [issuingMode, setIssuingMode] = useState(0);
@@ -15,11 +17,10 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
   const [owner, setOwner] = useState("");
   const [issuingAlert, setIssuingAlert] = useState("");
   const [allTransactions, setAllTransactions] = useState([]);
+  const [stx, setStx] = useState("")
 
   const person = new Person(userData.profile);
   const storage = new Storage({ userSession });
-
-  const allTransactionsFile = "transactions.json";
 
   const setCustomAlert = (setter, type, text) => {
     let customClass = `alert alert-${type} alert-dismissible fade show`;
@@ -31,14 +32,40 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
 
   useEffect(() => {
     try {
-      storage.getFile(allTransactionsFile, { decrypt: false }).then(file => {
-        setAllTransactions(JSON.parse(file));
-        console.log(JSON.parse(file))
+      let principal = null;
+      if (CHAIN_TYPE === 'testnet')
+        principal = person._profile.stxAddress.testnet
+      else
+        principal = person._profile.stxAddress.mainnet
 
+      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions`).then((res) => {
+        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}`).then((res)=>{
+          let transactions = res.data.results.map(r=>{
+            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`}
+          })
+          setAllTransactions(transactions)
+        })
       })
     }
     catch (err) {
+      console.log(err)
+    }
+  }, [])
 
+  useEffect(() => {
+    try {
+      let principal = null;
+      if (CHAIN_TYPE === 'testnet')
+        principal = person._profile.stxAddress.testnet
+      else
+        principal = person._profile.stxAddress.mainnet
+
+      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/stx`).then((res) => {
+        setStx((parseInt(res.data.balance)/1000000).toString())
+      })
+    }
+    catch (err) {
+      console.log(err)
     }
   }, [])
 
@@ -56,14 +83,9 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
       storage
         .putFile(file.name, file, options)
         .then(async (r) => {
-          //console.log(owner, MD5(file).toString(), degree, r)
           let resp = await issueNFT(owner, MD5(file).toString(), degree, r)
-          console.log("test", resp)
           if (resp.status === 200) {
             setCustomAlert(setIssuingAlert, 'success', 'The document has successfully been stored and secured on the Blockchain as a Non-Fungible Token.')
-            let obj = allTransactions
-            obj.push({ "txid": resp.txid, "txlink": resp.txlink })
-            storage.putFile(allTransactionsFile, JSON.stringify(obj), options)
           }
           else {
             setCustomAlert(setIssuingAlert, 'danger', 'There was a problem in issuing the document.')
@@ -77,10 +99,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
   return (
     <div className="container text-start">
       <div className='d-flex flex-row justify-content-between mt-5'>
-        <h3 className='osb'>Welcome, {person._profile.stxAddress.testnet}</h3>
-        <button type="button" className='btn btn-primary ms-2' onClick={()=>{
-          storage.deleteFile(allTransactionsFile);
-        }}>TEST FUNCTION: Clear Gaia Hub</button>
+        <h3 className='osb'>Welcome, {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet}</h3>
         <button type="button" className='btn btn-primary ms-2' onClick={handleSignOut}> Sign Out</button>
       </div>
 
@@ -126,8 +145,8 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
 
         </div>
       </div>
-        
-      <TransactionsBox data = {allTransactions} />
+
+      <TransactionsBox data={allTransactions} />
     </div>
   );
 }
