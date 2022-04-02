@@ -43,7 +43,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}`).then((res)=>{
           console.log(res.data)
           let transactions = res.data.results.map(r=>{
-            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`}
+            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "details":r.contract_call}
           })
           setAllTransactions(transactions)
         })
@@ -106,7 +106,11 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
           
           }}> {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet} </button>}
         {/* <h3>Welcome, {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet}</h3> */}
+        <div>
+        <button className='reveal-btn' disabled>STX Balance: {stx}</button>
         <button type="button" className='btn1 btn-md ms-2' onClick={handleSignOut}> Sign Out</button>
+        </div>
+        
       </div>
 
       <div className='content-container'>
