@@ -43,6 +43,30 @@ height: 100%;
 
 }
 
+.btn-md{
+  font-size: medium;
+  padding: 10px 30px 10px 30px;
+
+}
+
+.btn-sm{
+  font-size: small;
+  padding: 5px 30px 5px 30px;
+
+}
+
+.reveal-btn{
+  font-weight: 700;
+  font-size: smaller;
+  border: 0;
+  border-radius: 25px;
+  padding: 5px 30px 5px 30px;
+}
+
+.reveal-btn:hover{
+  background-color: #c4c4c4;
+}
+
 .navbar {
   background-color: #0f0f0f !important;
   -webkit-border-radius: 0;
