@@ -57,7 +57,7 @@ export const Signin = () => {
             About
           </div>
         </div>
-        <div>
+        <div className='d-none d-lg-block'>
           <BubbleSVG style={{ bottom: 0, right: 0, position: "absolute" }} />
         </div>
       </div>

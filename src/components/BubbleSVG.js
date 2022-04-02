@@ -6,7 +6,7 @@ const BubbleSVG = (props) => (
     data-name="Layer 1"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 1037 857"
-    height="45rem"
+    height="70%"
     {...props}
   >
     <defs>
