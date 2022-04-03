@@ -18,6 +18,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
   const [issuingAlert, setIssuingAlert] = useState("");
   const [allTransactions, setAllTransactions] = useState([]);
   const [stx, setStx] = useState("")
+  const [reveal, setReveal] = useState(0)
 
   const person = new Person(userData.profile);
   const storage = new Storage({ userSession });
@@ -38,10 +39,11 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
       else
         principal = person._profile.stxAddress.mainnet
 
-      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions`).then((res) => {
-        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}`).then((res)=>{
+      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?unanchored=true`).then((res) => {
+        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}&unanchored=true`).then((res)=>{
+          console.log(res.data)
           let transactions = res.data.results.map(r=>{
-            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`}
+            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "time":r.burn_block_time_iso,"details":r.contract_call}
           })
           setAllTransactions(transactions)
         })
@@ -99,8 +101,16 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
   return (
     <div className="container text-start">
       <div className='d-flex flex-row justify-content-between mt-5'>
-        <h3 className='osb'>Welcome, {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet}</h3>
-        <button type="button" className='btn btn-primary ms-2' onClick={handleSignOut}> Sign Out</button>
+        {reveal === 0 ? <button className='reveal-btn' onClick={()=>{setReveal(1)}}>REVEAL ADDRESS</button> : <button className='reveal-btn' onClick={()=>{
+          setReveal(0);
+          
+          }}> {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet} </button>}
+        {/* <h3>Welcome, {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet}</h3> */}
+        <div>
+        <button className='reveal-btn' disabled>STX Balance: {stx}</button>
+        <button type="button" className='btn1 btn-md ms-2' onClick={handleSignOut}> Sign Out</button>
+        </div>
+        
       </div>
 
       <div className='content-container'>
@@ -110,14 +120,15 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         <div>
           {issuingMode === 0 ?
             <>
-              <h3 className='mb-4'>Issue a new credential</h3>
+              <h3 style={{fontWeight:"700"}}>Issue a new credential</h3>
+              <h4 className='mt-4' style={{fontWeight:"600"}}>What's this?</h4>
               <h5>By issuing a credential through DIMS, you take advantage of safe and distributed cloud platforms which help store the information you wish to share with your clients in a much secure manner than many traditional methods out there.</h5>
-              <button className='btn btn-primary mt-5' type="button" data-bs-toggle="modal" data-bs-target="#uploadModal" onClick={() => {
+              <button className='btn1 btn-md mt-5' type="button" data-bs-toggle="modal" data-bs-target="#uploadModal" onClick={() => {
                 if (issuingMode === 0)
                   setIssuingMode(1)
               }}>Issue a new credential</button> </> :
             <>
-              <h5>Enter the following details and pick the credential you want to upload from your local storage.</h5>
+              <h6>Enter the following details and pick the credential you want to upload from your local storage.</h6>
 
 
               <form onSubmit={issueCredential}>
@@ -131,8 +142,8 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
                 </div>
 
                 <input type="file" id="file" onChange={(e) => { setFile(e.target.files[0]) }} /><br />
-                <button type="submit" className='btn btn-primary mt-5'>Issue</button>
-                <button className='btn btn-danger mt-5 ms-3' type="button" onClick={() => {
+                <button type="submit" className='btn1 btn-sm mt-5'>Issue</button>
+                <button className='btn1 btn-sm mt-5 ms-3' style={{backgroundColor:"maroon"}} type="button" onClick={() => {
                   if (issuingMode === 1)
                     setIssuingMode(0)
                   setIssuingAlert("")

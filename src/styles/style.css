@@ -1,17 +1,4 @@
 /* Globals */
-@font-face {
-  font-family: "osb";
-  src: url("../assets/fonts/OpenSauceSans-Bold.ttf");
-}
-
-@font-face {
-  font-family: "osm";
-  src: url("../assets/fonts/OpenSauceSans-Medium.ttf");
-}
-
-.osb{
-  font-family: osb;
-}
 
 a,
 a:focus,
@@ -22,7 +9,7 @@ html,
 body {
 height: 100%;
   background-color: white;
-  font-family: "osm";
+  font-family: 'Raleway', sans-serif;
   text-align: center;
 }
 
@@ -36,50 +23,77 @@ height: 100%;
 }
 
 /* Buttons */
-.btn {
-  font-family: "Source Code Pro", monospace;
-  padding: 0.5625rem 2.5rem;
-  font-size: 0.8125rem;
-  font-weight: 400;
-  line-height: 1.75rem;
-  border-radius: 0 !important;
-  -webkit-transition: all 0.2s ease-in-out;
-  -moz-transition: all 0.2s ease-in-out;
-  -ms-transition: all 0.2s ease-in-out;
-  -o-transition: all 0.2s ease-in-out;
-  transition: all 0.2s ease-in-out;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+.btn1{
+  border-radius: 25px;
+  font-weight: 500;
+  background-color: #331d96;
+  border: none;
+  cursor: pointer;
+  color:white;
+
 }
-.btn-lg {
-  font-size: 0.875rem;
-  padding: 0.6875rem 3.4375rem;
-  line-height: 1.75rem;
+
+.btn1:hover{
+  background-color: #4029a5;
 }
-.btn:focus,
-.btn:active:focus,
-.btn.active:focus {
-  outline: none;
+
+.btn-lg{
+  font-size: larger;
+  padding: 20px 60px 20px 60px;
+
 }
-.btn-primary {
-  background-color: #0f0f0f;
-  border: 1px solid #0f0f0f;
+
+.btn-md{
+  font-size: medium;
+  padding: 10px 30px 10px 30px;
+
 }
-.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active {
-  color: #fff;
-  border: 1px solid #270f34;
-  background-color: #270f34;
+
+.btn-sm{
+  font-size: small;
+  padding: 5px 30px 5px 30px;
+
 }
+
+.reveal-btn{
+  font-weight: 700;
+  font-size: smaller;
+  border: 0;
+  border-radius: 25px;
+  padding: 5px 30px 5px 30px;
+}
+
+.reveal-btn:hover{
+  background-color: #c4c4c4;
+}
+
+.searchbar{
+  border: 0;
+  margin-top:50px;
+  font-size: medium;
+  font-weight: 600;
+  padding: 0px 30px 0px 30px;
+  border-radius: 25px;
+  width: 90%;
+}
+
 .navbar {
   background-color: #0f0f0f !important;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
 }
+
+.anchor-text{
+  font-weight: 500;
+  font-size: large;
+  cursor: pointer;
+}
+
+.anchor-text:hover{
+  color:#4029a5;
+}
+
 
 /* Avatar */
 .avatar {
