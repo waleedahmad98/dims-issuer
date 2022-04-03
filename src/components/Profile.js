@@ -39,11 +39,11 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
       else
         principal = person._profile.stxAddress.mainnet
 
-      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions`).then((res) => {
-        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}`).then((res)=>{
+      axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?unanchored=true`).then((res) => {
+        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}&unanchored=true`).then((res)=>{
           console.log(res.data)
           let transactions = res.data.results.map(r=>{
-            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "details":r.contract_call}
+            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "time":r.burn_block_time_iso,"details":r.contract_call}
           })
           setAllTransactions(transactions)
         })

@@ -67,6 +67,16 @@ height: 100%;
   background-color: #c4c4c4;
 }
 
+.searchbar{
+  border: 0;
+  margin-top:50px;
+  font-size: medium;
+  font-weight: 600;
+  padding: 0px 30px 0px 30px;
+  border-radius: 25px;
+  width: 90%;
+}
+
 .navbar {
   background-color: #0f0f0f !important;
   -webkit-border-radius: 0;
