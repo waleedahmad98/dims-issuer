@@ -81,11 +81,11 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
       const options = {
         encrypt: false,
       };
-
       storage
         .putFile(file.name, file, options)
         .then(async (r) => {
-          let resp = await issueNFT(owner, MD5(file).toString(), degree, r)
+          let fileText = await file.text()
+          let resp = await issueNFT(owner, MD5(fileText).toString(), degree, r)
           if (resp.status === 200) {
             setCustomAlert(setIssuingAlert, 'success', 'The document has successfully been stored and secured on the Blockchain as a Non-Fungible Token.')
           }
