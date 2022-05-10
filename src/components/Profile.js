@@ -4,13 +4,16 @@ import { useState, useEffect } from 'react';
 import {
   Person, transactions,
 } from 'blockstack';
+import { getPublicKeyFromPrivate, makeECPrivateKey } from '@stacks/encryption';
 import { issueNFT } from '../functions/contractCalls';
 import MD5 from 'crypto-js/md5';
 import TransactionsBox from './TransactionsBox';
 import { BASE_API_URL, CHAIN_TYPE } from '../config';
 import axios from 'axios';
 
+
 export const Profile = ({ userData, userSession, handleSignOut }) => {
+  const [publicKey, setPublicKey] = useState('');
   const [issuingMode, setIssuingMode] = useState(0);
   const [file, setFile] = useState("");
   const [degree, setDegree] = useState("");
@@ -31,6 +34,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
     </div>)
   }
 
+  // get all transactions
   useEffect(() => {
     try {
       let principal = null;
@@ -40,10 +44,10 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         principal = person._profile.stxAddress.mainnet
 
       axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?unanchored=true`).then((res) => {
-        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}&unanchored=true`).then((res)=>{
+        axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/transactions?limit=${res.data.total}&unanchored=true`).then((res) => {
           console.log(res.data)
-          let transactions = res.data.results.map(r=>{
-            return {"txid":r.tx_id, "txlink":`https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "time":r.burn_block_time_iso,"details":r.contract_call}
+          let transactions = res.data.results.map(r => {
+            return { "txid": r.tx_id, "txlink": `https://explorer.stacks.co/txid/${r.tx_id}?chain=${CHAIN_TYPE}`, "time": r.burn_block_time_iso, "details": r.contract_call }
           })
           setAllTransactions(transactions)
         })
@@ -54,6 +58,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
     }
   }, [])
 
+  // get stx amount
   useEffect(() => {
     try {
       let principal = null;
@@ -62,8 +67,9 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
       else
         principal = person._profile.stxAddress.mainnet
 
+
       axios.get(`${BASE_API_URL}/extended/v1/address/${principal}/stx`).then((res) => {
-        setStx((parseInt(res.data.balance)/1000000).toString())
+        setStx((parseInt(res.data.balance) / 1000000).toString())
       })
     }
     catch (err) {
@@ -71,6 +77,13 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
     }
   }, [])
 
+  // function to retreive a Users Public Key
+  const getUserPublicKey = async (ownerAdd) => {
+    let userPubKey = await axios.get(`http://localhost:8000/api/getKey/${ownerAdd}`)
+    return userPubKey;
+  }
+
+  // function to issue a credential
   const issueCredential = (e) => {
     e.preventDefault();
 
@@ -85,7 +98,8 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         .putFile(file.name, file, options)
         .then(async (r) => {
           let fileText = await file.text()
-          let resp = await issueNFT(owner, MD5(fileText).toString(), degree, r)
+          const holderPubKey = await getUserPublicKey(owner); // implement this
+          let resp = await issueNFT(owner, MD5(fileText).toString(), degree, r, holderPubKey.data.publicKey)
           if (resp.status === 200) {
             setCustomAlert(setIssuingAlert, 'success', 'The document has successfully been stored and secured on the Blockchain as a Non-Fungible Token.')
           }
@@ -101,16 +115,16 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
   return (
     <div className="container text-start">
       <div className='d-flex flex-row justify-content-between mt-5'>
-        {reveal === 0 ? <button className='reveal-btn' onClick={()=>{setReveal(1)}}>REVEAL ADDRESS</button> : <button className='reveal-btn' onClick={()=>{
+        {reveal === 0 ? <button className='reveal-btn' onClick={() => { setReveal(1) }}>REVEAL ADDRESS</button> : <button className='reveal-btn' onClick={() => {
           setReveal(0);
-          
-          }}> {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet} </button>}
+
+        }}> {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet} </button>}
         {/* <h3>Welcome, {CHAIN_TYPE === "testnet" ? person._profile.stxAddress.testnet : person._profile.stxAddress.mainnet}</h3> */}
         <div>
-        <button className='reveal-btn' disabled>STX Balance: {stx}</button>
-        <button type="button" className='btn1 btn-md ms-2' onClick={handleSignOut}> Sign Out</button>
+          <button className='reveal-btn' disabled>STX Balance: {stx}</button>
+          <button type="button" className='btn1 btn-md ms-2' onClick={handleSignOut}> Sign Out</button>
         </div>
-        
+
       </div>
 
       <div className='content-container'>
@@ -120,8 +134,8 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         <div>
           {issuingMode === 0 ?
             <>
-              <h3 style={{fontWeight:"700"}}>Issue a new credential</h3>
-              <h4 className='mt-4' style={{fontWeight:"600"}}>What's this?</h4>
+              <h3 style={{ fontWeight: "700" }}>Issue a new credential</h3>
+              <h4 className='mt-4' style={{ fontWeight: "600" }}>What's this?</h4>
               <h5>By issuing a credential through DIMS, you take advantage of safe and distributed cloud platforms which help store the information you wish to share with your clients in a much secure manner than many traditional methods out there.</h5>
               <button className='btn1 btn-md mt-5' type="button" data-bs-toggle="modal" data-bs-target="#uploadModal" onClick={() => {
                 if (issuingMode === 0)
@@ -143,7 +157,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
 
                 <input type="file" id="file" onChange={(e) => { setFile(e.target.files[0]) }} /><br />
                 <button type="submit" className='btn1 btn-sm mt-5'>Issue</button>
-                <button className='btn1 btn-sm mt-5 ms-3' style={{backgroundColor:"maroon"}} type="button" onClick={() => {
+                <button className='btn1 btn-sm mt-5 ms-3' style={{ backgroundColor: "maroon" }} type="button" onClick={() => {
                   if (issuingMode === 1)
                     setIssuingMode(0)
                   setIssuingAlert("")

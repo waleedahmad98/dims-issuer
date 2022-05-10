@@ -5,19 +5,20 @@ import {
 } from "@stacks/transactions";
 
 
-const issueNFT = async (owner, hash, degree, link) => {
+const issueNFT = async (owner, hash, degree, link, holderPubKey) => {
     let resp = {};
 
     const functionArgs = [
         standardPrincipalCV(owner),
         stringAsciiCV(hash),
         stringAsciiCV(degree),
-        stringAsciiCV(link)
+        stringAsciiCV(link),
+        stringAsciiCV(holderPubKey)
       ];
 
     const options = {
-        contractAddress: "ST3NXW8T49WPYFX9R3XVJE748HFSGR2VT9ETSBBB5",
-        contractName: "degree-minter-2",
+        contractAddress: "ST2Q13EZ2EJYQRPMS19N5JV7SG1Q4MMDN1HVWEP9",
+        contractName: "degree-minter-3",
         functionName: "mint",
         functionArgs,
         appDetails: {
@@ -25,7 +26,6 @@ const issueNFT = async (owner, hash, degree, link) => {
             icon: window.location.origin + "/my-app-logo.svg",
         },
         onFinish: (data) => {
-            console.log("test2", data.txId)
             resp = {"txlink":`https://explorer.stacks.co/txid/${data.txId.txid}?chain=testnet`, "txid":data.txId.txid, "status":200};
         },
     };
