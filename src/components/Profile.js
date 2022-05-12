@@ -99,6 +99,10 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
         .then(async (r) => {
           let fileText = await file.text()
           const holderPubKey = await getUserPublicKey(owner); // implement this
+          if (holderPubKey === null){
+            setCustomAlert(setIssuingAlert, 'danger', 'No Public Key for this Wallet Holder exists. Unable to generate NFT.')
+            return
+          }
           let resp = await issueNFT(owner, MD5(fileText).toString(), degree, r, holderPubKey.data.publicKey)
           if (resp.status === 200) {
             setCustomAlert(setIssuingAlert, 'success', 'The document has successfully been stored and secured on the Blockchain as a Non-Fungible Token.')
