@@ -32,11 +32,11 @@
     "react-dom": "^16.8.6",
     "react-router-dom": "^4.3.1",
     "react-scripts": "3.0.1",
-    "run": "^1.4.0"
+    "run": "^1.4.0",
+    "serve": "^13.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
-    "starthttp": "set HTTPS=true&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts build",
     "eject": "react-scripts eject"
