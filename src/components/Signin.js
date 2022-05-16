@@ -47,13 +47,14 @@ export const Signin = () => {
       </div>
       <div className='col-6'>
         <div className='d-flex flex-row justify-content-end mt-5 me-5'>
-          <div className='me-5 anchor-text'>
-            Home
-          </div>
-          <div className='me-5 anchor-text'>
+          <div className='me-5 anchor-text' onClick={()=>{
+            window.open("https://www.stacks.co/", "_blank")
+          }}>
             Stacks
           </div>
-          <div className='anchor-text'>
+          <div className='anchor-text' onClick={()=>{
+            window.open("https://waleedfastnu.github.io/", "_blank")
+          }}>
             About
           </div>
         </div>
