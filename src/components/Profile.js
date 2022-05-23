@@ -79,7 +79,7 @@ export const Profile = ({ userData, userSession, handleSignOut }) => {
 
   // function to retreive a Users Public Key
   const getUserPublicKey = async (ownerAdd) => {
-    let userPubKey = await axios.get(`http://localhost:8000/api/getKey/${ownerAdd}`)
+    let userPubKey = await axios.get(`https://dims-backend.herokuapp.com/api/getKey/${ownerAdd}`)
     return userPubKey;
   }
 
