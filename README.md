@@ -1,4 +1,4 @@
-# Digital Identity Management System Through Blockchain - Holder 
+# Digital Identity Management System Through Blockchain - Issuer 
 The Digital Identity Management System (DIMS) is a blockchain based application aimed to provide secure method of storing and sharing digital credentials, certificates and degrees. It utitlizes decentralized networks to eliminate storage of important credentials on vulnerable servers that are prone to hijacking and hacking. The blockchain architecture makes sure that the credentials are tamper-proof by generating Non-fungible tokens of the credentials.
 
 ## Components
